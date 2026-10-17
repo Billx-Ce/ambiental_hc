@@ -1,0 +1,29 @@
+# Preparación solamente. Este archivo no publica ni conecta una cuenta.
+services:
+  - type: web
+    name: huanuco-ambiental
+    runtime: python
+    buildCommand: >-
+      pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu &&
+      pip install -r requirements.txt &&
+      pip uninstall -y opencv-python &&
+      pip install 'opencv-python-headless>=4.8,<5'
+    startCommand: gunicorn --bind 0.0.0.0:$PORT --workers 1 --threads 4 --timeout 120 app:app
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.11
+      - key: MONGODB_URI
+        sync: false
+      - key: MONGODB_DB
+        value: ambiental_huanuco
+      - key: SECRET_KEY
+        generateValue: true
+      - key: INFERENCE_BACKEND
+        value: pt
+      - key: OMP_NUM_THREADS
+        value: '2'
+      - key: MPLCONFIGDIR
+        value: /tmp/matplotlib
+      - key: YOLO_CONFIG_DIR
+        value: /tmp/ultralytics

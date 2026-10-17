@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="es">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#153f35"><title>{{ 'Crear cuenta' if registro else 'Iniciar sesión' }} · Huánuco Ambiental</title><link rel="stylesheet" href="{{ url_for('static', filename='app.css') }}"><script src="{{ url_for('static', filename='auth.js') }}" defer></script></head>
+<body class="auth-page">
+<nav class="topbar" aria-label="Principal"><a class="brand" href="{{ url_for('auth.login') }}">HA<span>Huánuco Ambiental</span></a><span class="hint">PROYECTO INNOBEST</span></nav>
+<main class="auth-layout">
+  <section class="auth-intro"><p class="eyebrow">HUÁNUCO, PERÚ</p><h1>Cuidar el entorno<br>empieza por observar.</h1><p class="intro">Analiza imágenes y video en vivo de basura, deforestación e incendio. Accede a tus resultados desde una cuenta personal.</p><p class="auth-disclaimer">El modelo ofrece una categoría estimada. Cada resultado requiere verificación humana.</p></section>
+  <section class="card auth-card" aria-labelledby="auth-title">
+    <p class="eyebrow">{{ 'TU ESPACIO AMBIENTAL' if registro else 'BIENVENIDO DE NUEVO' }}</p><h2 id="auth-title">{{ 'Crea tu cuenta' if registro else 'Inicia sesión' }}</h2><p class="muted auth-subtitle">{{ 'Guarda tus análisis y consulta tu propio historial.' if registro else 'Entra para continuar con tus análisis.' }}</p>
+    {% if error %}<p class="auth-error" role="alert">{{ error }}</p>{% endif %}
+    <form method="post" action="{{ url_for('auth.registro' if registro else 'auth.login') }}" class="auth-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      {% if registro %}<label for="nombre">Nombre</label><input id="nombre" name="nombre" autocomplete="name" minlength="2" maxlength="80" value="{{ nombre }}" required>{% endif %}
+      <label for="email">Correo electrónico</label><input id="email" name="email" type="email" autocomplete="{{ 'email' if registro else 'username' }}" maxlength="254" value="{{ email }}" required>
+      <label for="password">Contraseña</label><div class="password-field"><input id="password" name="password" type="password" autocomplete="{{ 'new-password' if registro else 'current-password' }}" {% if registro %}minlength="10"{% endif %} maxlength="128" {% if registro %}aria-describedby="password-help"{% endif %} required><button type="button" data-password-target="password" aria-controls="password" aria-pressed="false">Mostrar</button></div>
+      {% if registro %}<p id="password-help" class="hint">Entre 10 y 128 caracteres. Usa una contraseña única.</p><label for="confirmar-password">Repite la contraseña</label><div class="password-field"><input id="confirmar-password" name="confirmar_password" type="password" autocomplete="new-password" minlength="10" maxlength="128" required><button type="button" data-password-target="confirmar-password" aria-controls="confirmar-password" aria-pressed="false">Mostrar</button></div>{% endif %}
+      <button type="submit" class="primary auth-submit">{{ 'Crear cuenta y entrar' if registro else 'Entrar al sistema' }}</button>
+      <p id="auth-progress" class="hint" role="status" aria-live="polite"></p>
+    </form>
+    <p class="auth-alternative">{% if registro %}¿Ya tienes cuenta? <a href="{{ url_for('auth.login') }}">Inicia sesión</a>{% else %}¿Primera vez aquí? <a href="{{ url_for('auth.registro') }}">Crea tu cuenta</a>{% endif %}</p>
+    <p class="hint auth-privacy">Tu contraseña se almacena como un hash. Las imágenes analizadas no se guardan. Tu historial de resultados está asociado a tu cuenta.</p>
+  </section>
+</main><footer>Huánuco Ambiental <span>Observación ambiental con revisión humana</span></footer>
+</body></html>
